@@ -1,6 +1,7 @@
 console.clear()
 const express = require('express');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
+
 const cors = require('cors');
 
 
@@ -98,7 +99,7 @@ app.delete('/delete_post/:id', async (req, res) => {
 
         const postId = req.params.id; // Assuming the post ID is passed as a route parameter
 
-        const result = await collection.deleteOne({ _id: await ObjectId(postId) });
+        const result = await collection.deleteOne({ _id: new ObjectId(postId) });
         console.log('Data deleted successfully:', result.deletedCount);
 
         if (result.deletedCount === 1) {
