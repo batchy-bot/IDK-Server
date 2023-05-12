@@ -23,7 +23,6 @@ app.get('/', (req, res) => {
 
 /** GET /users route handler */
 app.get('/users', async (req, res) => {
-    console.log('getting')
     try {
         // Connect to MongoDB Server
         const client = await MongoClient.connect(url);
@@ -53,6 +52,7 @@ app.get('/posts', async (req, res) => {
 
         // Retrieve all posts from idk-users-posts collection
         const posts = await db.collection('idk-users-posts').find().toArray();
+        console.log(posts)
 
         // Close MongoDB client
         client.close();
@@ -84,6 +84,31 @@ app.post('/add_post', async (req, res) => {
     } catch (error) {
         console.log('Error adding data:', error);
         res.status(500).json({ error: 'Error adding data' });
+    } finally {
+        await client.close();
+    }
+});
+
+app.delete('/delete_post/:id', async (req, res) => {
+    const client = await MongoClient.connect(url);
+
+    try {
+        const db = client.db(dbName);
+        const collection = db.collection('idk-users-posts'); // Replace with your collection name
+
+        const postId = req.params.id; // Assuming the post ID is passed as a route parameter
+
+        const result = await collection.deleteOne({ _id: await ObjectId(postId) });
+        console.log('Data deleted successfully:', result.deletedCount);
+
+        if (result.deletedCount === 1) {
+            res.status(200).json({ message: 'Data deleted successfully' });
+        } else {
+            res.status(404).json({ error: 'Post not found' });
+        }
+    } catch (error) {
+        console.log('Error deleting data:', error);
+        res.status(500).json({ error: 'Error deleting data' });
     } finally {
         await client.close();
     }
