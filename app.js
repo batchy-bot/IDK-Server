@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(cors());
 
 app.get('/', (req, res) => {
-    console.log('Running...')
+    res.send('Running')
 })
 
 /** GET /users route handler */
