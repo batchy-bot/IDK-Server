@@ -115,6 +115,26 @@ app.delete('/delete_post/:id', async (req, res) => {
     }
 });
 
+app.post('/register_user', async (req, res) => {
+    const client = await MongoClient.connect(url);
+    try {
+        const db = client.db(dbName);
+        const collection = db.collection('idk-users');
+
+        const newData = req.body;
+
+        const result = await collection.insertOne(newData);
+        console.log('Data added successfully: ', result.insertedId);
+
+        res.status(200).json({ message: 'User Successfully Registered!' });
+    } catch (error) {
+        console.log('User Registration Error: ', error);
+        res.status(500).json({ error: 'Error Adding Data' });
+    } finally {
+        await client.close()
+    }
+})
+
 
 // Start server
 app.listen(PORT, () => {
